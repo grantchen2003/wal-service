@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.github.grantchen2003.wal";
+option java_outer_classname = "WALProto";
+
+import "google/protobuf/empty.proto";
+
+service WAL {
+  rpc Create (google.protobuf.Empty) returns (CreateResponse);
+  rpc Append(AppendRequest) returns (google.protobuf.Empty);
+}
+
+message CreateResponse {
+  string walId = 1;
+}
+
+message AppendRequest {
+  string walId = 1;
+  string data = 2;
+}
