@@ -17,5 +17,5 @@ message CreateResponse {
 
 message AppendRequest {
   string walId = 1;
-  string data = 2;
+  string payload = 2;
 }
