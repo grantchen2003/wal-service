@@ -17,13 +17,20 @@ public class WALManager {
         return walId;
     }
 
-    public void append(String walId, String payload) throws IOException {
+    public void append(String walId, long txId, String payload) throws IOException {
         final WALEntry walEntry = new WALEntry.Builder()
+                .withSequenceNum(getLastSequenceNum(walId) + 1)
+                .withTxId(txId)
                 .withPayload(payload)
                 .withTimestamp(Instant.now())
                 .build();
 
         FileUtils.appendAndSync(getWALPath(walId), walEntry.toBytes());
+    }
+
+    // TODO
+    private long getLastSequenceNum(String walId) {
+        return 2;
     }
 
     private Path getWALPath(String walId) {

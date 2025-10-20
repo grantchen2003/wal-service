@@ -26,10 +26,11 @@ public class WALService extends WALGrpc.WALImplBase{
     @Override
     public void append(AppendRequest request, StreamObserver<Empty> responseObserver) {
         final String walId = request.getWalId();
+        final long txId = request.getTxId();
         final String payload = request.getPayload();
 
         try {
-            walManager.append(walId, payload);
+            walManager.append(walId, txId, payload);
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (IllegalArgumentException | IOException e) {
