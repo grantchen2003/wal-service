@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public class FileUtils {
     private FileUtils() {}
 
-    public static void createDirectoryIfNotExist(Path dirPath) throws IOException {
+    public static void createDirectoryIfNotExists(Path dirPath) throws IOException {
         if (Files.notExists(dirPath)) {
             Files.createDirectories(dirPath);
         }

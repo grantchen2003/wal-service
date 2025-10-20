@@ -10,10 +10,19 @@ import java.util.UUID;
 public class WALManager {
     private static final Path walsDir = Path.of("wals");
 
+    static {
+        try {
+            FileUtils.createDirectoryIfNotExists(walsDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String create() throws IOException {
-        FileUtils.createDirectoryIfNotExist(walsDir);
         final String walId = UUID.randomUUID().toString();
-        FileUtils.createFileIfNotExists(getWALPath(walId));
+        FileUtils.createDirectoryIfNotExists(getWALDirPath(walId));
+        FileUtils.createFileIfNotExists(getWALDataPath(walId));
+        FileUtils.createFileIfNotExists(getWALIndexPath(walId));
         return walId;
     }
 
@@ -25,7 +34,7 @@ public class WALManager {
                 .withTimestamp(Instant.now())
                 .build();
 
-        FileUtils.appendAndSync(getWALPath(walId), walEntry.toBytes());
+        FileUtils.appendAndSync(getWALDataPath(walId), walEntry.toBytes());
     }
 
     // TODO
@@ -33,7 +42,15 @@ public class WALManager {
         return 2;
     }
 
-    private Path getWALPath(String walId) {
-        return walsDir.resolve(walId + ".bin");
+    private Path getWALDirPath(String walId) {
+        return walsDir.resolve(walId);
+    }
+
+    private Path getWALDataPath(String walId) {
+        return getWALDirPath(walId).resolve("data.bin");
+    }
+
+    private Path getWALIndexPath(String walId) {
+        return getWALDirPath(walId).resolve("index.bin");
     }
 }
