@@ -6,12 +6,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 public class FileUtils {
-    private FileUtils() {
-        throw new AssertionError("Cannot instantiate utility class");
-    }
+    private FileUtils() {}
 
     public static void createDirectoryIfNotExist(Path dirPath) throws IOException {
         if (Files.notExists(dirPath)) {

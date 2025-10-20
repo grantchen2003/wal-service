@@ -3,8 +3,6 @@ package io.github.grantchen2003.wal;
 import io.github.grantchen2003.wal.util.FileUtils;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.UUID;
@@ -20,23 +18,12 @@ public class WALManager {
     }
 
     public void append(String walId, String payload) throws IOException {
-        final byte[] payloadBytes = payload.getBytes(StandardCharsets.UTF_8);
-        FileUtils.appendAndSync(getWALPath(walId), createWALEntry(payloadBytes));
-    }
+        final WALEntry walEntry = new WALEntry.Builder()
+                .withPayload(payload)
+                .withTimestamp(Instant.now())
+                .build();
 
-    private byte[] createWALEntry(byte[] payload) {
-        final int timestampBytes = Long.BYTES;
-        final int payloadLengthBytes = Integer.BYTES;
-        final int payloadBytes = payload.length;
-
-        final int walEntrySizeBytes = timestampBytes + payloadLengthBytes + payloadBytes;
-
-        final ByteBuffer walEntry = ByteBuffer.allocate(walEntrySizeBytes);
-        walEntry.putLong(Instant.now().toEpochMilli());
-        walEntry.putInt(payload.length);
-        walEntry.put(payload);
-
-        return walEntry.array();
+        FileUtils.appendAndSync(getWALPath(walId), walEntry.toBytes());
     }
 
     private Path getWALPath(String walId) {
